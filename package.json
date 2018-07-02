@@ -1,0 +1,80 @@
+{
+  "name": "retry-ts",
+  "version": "0.0.1",
+  "description": "Retry combinators for monadic actions that may fail",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "lint": "tslint -p tsconfig.json src/**/*.ts test/**/*.ts",
+    "jest": "jest",
+    "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
+    "fix-prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test}/**/*.ts\"",
+    "test": "npm run prettier && npm run jest",
+    "clean": "rimraf rm -rf lib/*",
+    "build": "npm run clean && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gcanti/retry-ts.git"
+  },
+  "author": "Giulio Canti <giulio.canti@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gcanti/retry-ts/issues"
+  },
+  "homepage": "https://github.com/gcanti/retry-ts",
+  "dependencies": {
+    "fp-ts": "^1.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.2",
+    "@types/node": "8.0.19",
+    "cross-env": "^5.1.4",
+    "jest": "^22.4.3",
+    "prettier": "^1.13.4",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^22.4.2",
+    "ts-node": "3.3.0",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.9.2"
+  },
+  "tags": [
+    "fp-ts",
+    "functional-programming",
+    "Retry combinators"
+  ],
+  "keywords": [
+    "fp-ts",
+    "functional-programming",
+    "Retry combinators"
+  ],
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    },
+    "collectCoverage": true,
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "test",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testPathIgnorePatterns": [],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 0
+      }
+    }
+  }
+}
