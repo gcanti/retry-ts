@@ -1,8 +1,7 @@
-// ../node_modules/.bin/webpack --watch --progress --config webpack.config.js
-// ts-node -r tsconfig-paths/register index.ts
-
-import { Monoid } from 'fp-ts/lib/Monoid'
-import { none, Option, some } from 'fp-ts/lib/Option'
+import { Monoid, getFunctionMonoid } from 'fp-ts/lib/Monoid'
+import { none, Option, some, getApplyMonoid } from 'fp-ts/lib/Option'
+import { getJoinSemigroup } from 'fp-ts/lib/Semigroup'
+import { ordNumber } from 'fp-ts/lib/Ord'
 
 // Adapted from https://github.com/Unisay/purescript-aff-retry
 
@@ -25,23 +24,12 @@ export interface RetryPolicy {
   (status: RetryStatus): Option<number>
 }
 
-// TODO: use Option.getApplyMonoid when fp-ts@1.7.0 lends
-export const monoidRetryPolicy: Monoid<RetryPolicy> = {
-  concat: (x, y) => status => {
-    const delayX = x(status)
-    const delayY = y(status)
-    if (delayX.isSome() && delayY.isSome()) {
-      return some(Math.max(delayX.value, delayY.value))
-    } else {
-      return none
-    }
-  },
-  empty: () => some(0)
-}
-
-// export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(getMonoid(getJoinSemigroup(ordNumber)))<
-//   RetryStatus
-// >()
+export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
+  getApplyMonoid({
+    ...getJoinSemigroup(ordNumber),
+    empty: 0
+  })
+)<RetryStatus>()
 
 /** Retry immediately, but only up to `i` times. */
 export const limitRetries = (i: number): RetryPolicy => {
