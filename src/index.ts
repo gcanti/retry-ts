@@ -24,6 +24,24 @@ export interface RetryPolicy {
   (status: RetryStatus): Option<number>
 }
 
+/**
+ * 'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
+ * The semantics of this combination are as follows:
+ *
+ * 1. If either policy returns 'None', the combined policy returns
+ * 'None'. This can be used to inhibit after a number of retries,
+ * for example.
+ *
+ * 2. If both policies return a delay, the larger delay will be used.
+ * This is quite natural when combining multiple policies to achieve a
+ * certain effect.
+ *
+ * @example
+ *
+ * // One can easily define an exponential backoff policy with a limited
+ * // number of retries:
+ * const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
+ */
 export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
   getApplyMonoid({
     ...getJoinSemigroup(ordNumber),
@@ -85,7 +103,6 @@ export const defaultRetryStatus: RetryStatus = {
 
 /**
  * Apply policy on status to see what the decision would be.
- * 'None' implies no retry, 'Some' returns updated status.
  */
 export const applyPolicy = (policy: RetryPolicy, status: RetryStatus): RetryStatus => {
   const previousDelay = policy(status)
