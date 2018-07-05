@@ -32,3 +32,7 @@ retrying in 2000 milliseconds <= exponentialBackoff + capDelay
 left("error")                 <= limitRetries
 */
 ```
+
+# License
+
+The MIT License (MIT)
