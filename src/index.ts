@@ -37,10 +37,11 @@ export interface RetryPolicy {
  * certain effect.
  *
  * @example
+ * import { monoidRetryPolicy, exponentialBackoff, limitRetries } from 'retry-ts'
  *
  * // One can easily define an exponential backoff policy with a limited
  * // number of retries:
- * const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
+ * export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
  */
 export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
   getApplyMonoid({
