@@ -1,3 +1,8 @@
+---
+title: Home
+nav_order: 1
+---
+
 TypeScript port of PureScript's [purescript-aff-retry](https://github.com/Unisay/purescript-aff-retry) package
 which in turn is a porting of Haskell's [retry](https://github.com/Soostone/retry) package
 
@@ -32,11 +37,3 @@ retrying in 2000 milliseconds <= exponentialBackoff + capDelay
 left("error")                 <= limitRetries
 */
 ```
-
-# Documentation
-
-- [API Reference](https://gcanti.github.io/retry-ts)
-
-# License
-
-The MIT License (MIT)
