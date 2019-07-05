@@ -32,7 +32,7 @@ the function implies we have reached the retry limit.
 
 ```ts
 export interface RetryPolicy {
-  (status: RetryStatus): Option<number>
+  (status: RetryStatus): O.Option<number>
 }
 ```
 
@@ -47,7 +47,7 @@ export interface RetryStatus {
   /** Delay incurred so far from retries */
   cumulativeDelay: number
   /** Latest attempt's delay. Will always be `none` on first run. */
-  previousDelay: Option<number>
+  previousDelay: O.Option<number>
 }
 ```
 

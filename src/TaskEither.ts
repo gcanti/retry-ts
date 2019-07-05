@@ -8,5 +8,5 @@ export const retrying = <L, A>(
   action: (status: RetryStatus) => TaskEither<L, A>,
   check: (e: Either<L, A>) => boolean
 ): TaskEither<L, A> => {
-  return new TaskEither(r(policy, status => action(status).value, check))
+  return r(policy, action, check)
 }

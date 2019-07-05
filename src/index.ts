@@ -1,7 +1,8 @@
 import { Monoid, getFunctionMonoid } from 'fp-ts/lib/Monoid'
-import { none, Option, some, getApplyMonoid } from 'fp-ts/lib/Option'
+import * as O from 'fp-ts/lib/Option'
 import { getJoinSemigroup } from 'fp-ts/lib/Semigroup'
 import { ordNumber } from 'fp-ts/lib/Ord'
+import { pipe } from 'fp-ts/lib/pipeable'
 
 // Adapted from https://github.com/Unisay/purescript-aff-retry
 
@@ -11,7 +12,7 @@ export interface RetryStatus {
   /** Delay incurred so far from retries */
   cumulativeDelay: number
   /** Latest attempt's delay. Will always be `none` on first run. */
-  previousDelay: Option<number>
+  previousDelay: O.Option<number>
 }
 
 /**
@@ -21,7 +22,7 @@ export interface RetryStatus {
  * the function implies we have reached the retry limit.
  */
 export interface RetryPolicy {
-  (status: RetryStatus): Option<number>
+  (status: RetryStatus): O.Option<number>
 }
 
 /**
@@ -44,7 +45,7 @@ export interface RetryPolicy {
  * export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
  */
 export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
-  getApplyMonoid({
+  O.getApplyMonoid({
     ...getJoinSemigroup(ordNumber),
     empty: 0
   })
@@ -52,7 +53,7 @@ export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
 
 /** Retry immediately, but only up to `i` times. */
 export const limitRetries = (i: number): RetryPolicy => {
-  return status => (status.iterNumber >= i ? none : some(0))
+  return status => (status.iterNumber >= i ? O.none : O.some(0))
 }
 
 /**
@@ -62,14 +63,16 @@ export const limitRetries = (i: number): RetryPolicy => {
  */
 export const limitRetriesByDelay = (maxDelay: number, policy: RetryPolicy): RetryPolicy => {
   return status =>
-    policy(status).chain(delay => {
-      return delay >= maxDelay ? none : some(delay)
-    })
+    pipe(
+      status,
+      policy,
+      O.filter(delay => delay < maxDelay)
+    )
 }
 
 /** Constant delay with unlimited retries */
 export const constantDelay = (delay: number): RetryPolicy => {
-  return () => some(delay)
+  return () => O.some(delay)
 }
 
 /**
@@ -81,7 +84,12 @@ export const constantDelay = (delay: number): RetryPolicy => {
  * 'limitRetries' function variants.
  */
 export const capDelay = (maxDelay: number, policy: RetryPolicy): RetryPolicy => {
-  return status => policy(status).map(delay => Math.min(maxDelay, delay))
+  return status =>
+    pipe(
+      status,
+      policy,
+      O.map(delay => Math.min(maxDelay, delay))
+    )
 }
 
 /**
@@ -89,7 +97,7 @@ export const capDelay = (maxDelay: number, policy: RetryPolicy): RetryPolicy => 
  * Each delay will increase by a factor of two.
  */
 export const exponentialBackoff = (delay: number): RetryPolicy => {
-  return status => some(delay * Math.pow(2, status.iterNumber))
+  return status => O.some(delay * Math.pow(2, status.iterNumber))
 }
 
 /**
@@ -99,7 +107,7 @@ export const exponentialBackoff = (delay: number): RetryPolicy => {
 export const defaultRetryStatus: RetryStatus = {
   iterNumber: 0,
   cumulativeDelay: 0,
-  previousDelay: none
+  previousDelay: O.none
 }
 
 /**
@@ -109,7 +117,7 @@ export const applyPolicy = (policy: RetryPolicy, status: RetryStatus): RetryStat
   const previousDelay = policy(status)
   return {
     iterNumber: status.iterNumber + 1,
-    cumulativeDelay: status.cumulativeDelay + previousDelay.getOrElse(0),
+    cumulativeDelay: status.cumulativeDelay + O.getOrElse(() => 0)(previousDelay),
     previousDelay
   }
 }

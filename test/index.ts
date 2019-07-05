@@ -1,7 +1,6 @@
 import * as assert from 'assert'
-import { array } from 'fp-ts/lib/Array'
+import { replicate } from 'fp-ts/lib/Array'
 import { none, some } from 'fp-ts/lib/Option'
-import { replicate } from 'fp-ts/lib/Unfoldable'
 import {
   applyPolicy,
   capDelay,
@@ -15,13 +14,11 @@ import {
   RetryStatus
 } from '../src'
 
-const replicateArray = replicate(array)
-
 /**
  * Apply policy `n` times
  */
 const applyPolicyN = (n: number, policy: RetryPolicy): RetryStatus => {
-  return replicateArray(policy, n).reduce((status, policy) => applyPolicy(policy, status), defaultRetryStatus)
+  return replicate(n, policy).reduce((status, policy) => applyPolicy(policy, status), defaultRetryStatus)
 }
 
 describe('retry policy', () => {
