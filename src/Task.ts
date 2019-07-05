@@ -1,13 +1,18 @@
-import { delay, Task, task } from 'fp-ts/lib/Task'
+import * as T from 'fp-ts/lib/Task'
+import * as O from 'fp-ts/lib/Option'
+import { pipe } from 'fp-ts/lib/pipeable'
 import { applyPolicy, defaultRetryStatus, RetryPolicy, RetryStatus } from '.'
 
 /**
  * Apply policy and delay by its amount if it results in a retry.
  * Returns updated status.
  */
-export const applyAndDelay = (policy: RetryPolicy, status: RetryStatus): Task<RetryStatus> => {
+export const applyAndDelay = (policy: RetryPolicy, status: RetryStatus): T.Task<RetryStatus> => {
   const newStatus = applyPolicy(policy, status)
-  return newStatus.previousDelay.foldL(() => task.of(newStatus), millis => delay(millis, newStatus))
+  return pipe(
+    newStatus.previousDelay,
+    O.fold(() => T.task.of(newStatus), millis => T.delay(millis)(T.task.of(newStatus)))
+  )
 }
 
 /**
@@ -17,19 +22,29 @@ export const applyAndDelay = (policy: RetryPolicy, status: RetryStatus): Task<Re
  */
 export const retrying = <A>(
   policy: RetryPolicy,
-  action: (status: RetryStatus) => Task<A>,
+  action: (status: RetryStatus) => T.Task<A>,
   check: (a: A) => boolean
-): Task<A> => {
-  const go = (status: RetryStatus): Task<A> => {
-    return action(status).chain(a => {
-      if (check(a)) {
-        return applyAndDelay(policy, status).chain(status =>
-          status.previousDelay.foldL(() => task.of(a), () => go(status))
-        )
-      } else {
-        return task.of(a)
-      }
-    })
-  }
+): T.Task<A> => {
+  const go = (status: RetryStatus): T.Task<A> =>
+    pipe(
+      status,
+      action,
+      T.chain(a => {
+        if (check(a)) {
+          return pipe(
+            applyAndDelay(policy, status),
+            T.chain(status =>
+              pipe(
+                status.previousDelay,
+                O.fold(() => T.task.of(a), () => go(status))
+              )
+            )
+          )
+        } else {
+          return T.task.of(a)
+        }
+      })
+    )
+
   return go(defaultRetryStatus)
 }
