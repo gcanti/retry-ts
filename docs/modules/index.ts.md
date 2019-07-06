@@ -36,6 +36,8 @@ export interface RetryPolicy {
 }
 ```
 
+Added in v0.1.0
+
 # RetryStatus (interface)
 
 **Signature**
@@ -51,6 +53,8 @@ export interface RetryStatus {
 }
 ```
 
+Added in v0.1.0
+
 # defaultRetryStatus (constant)
 
 Initial, default retry status. Exported mostly to allow user code
@@ -61,6 +65,8 @@ to test their handlers and retry policies.
 ```ts
 export const defaultRetryStatus: RetryStatus = ...
 ```
+
+Added in v0.1.0
 
 # monoidRetryPolicy (constant)
 
@@ -91,6 +97,8 @@ import { monoidRetryPolicy, exponentialBackoff, limitRetries } from 'retry-ts'
 export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
 ```
 
+Added in v0.1.0
+
 # applyPolicy (function)
 
 Apply policy on status to see what the decision would be.
@@ -98,8 +106,10 @@ Apply policy on status to see what the decision would be.
 **Signature**
 
 ```ts
-export const applyPolicy = (policy: RetryPolicy, status: RetryStatus): RetryStatus => ...
+export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus { ... }
 ```
+
+Added in v0.1.0
 
 # capDelay (function)
 
@@ -112,8 +122,10 @@ between each one. To get termination you need to use one of the
 **Signature**
 
 ```ts
-export const capDelay = (maxDelay: number, policy: RetryPolicy): RetryPolicy => ...
+export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
 ```
+
+Added in v0.1.0
 
 # constantDelay (function)
 
@@ -122,8 +134,10 @@ Constant delay with unlimited retries
 **Signature**
 
 ```ts
-export const constantDelay = (delay: number): RetryPolicy => ...
+export function constantDelay(delay: number): RetryPolicy { ... }
 ```
+
+Added in v0.1.0
 
 # exponentialBackoff (function)
 
@@ -133,8 +147,10 @@ Each delay will increase by a factor of two.
 **Signature**
 
 ```ts
-export const exponentialBackoff = (delay: number): RetryPolicy => ...
+export function exponentialBackoff(delay: number): RetryPolicy { ... }
 ```
+
+Added in v0.1.0
 
 # limitRetries (function)
 
@@ -143,8 +159,10 @@ Retry immediately, but only up to `i` times.
 **Signature**
 
 ```ts
-export const limitRetries = (i: number): RetryPolicy => ...
+export function limitRetries(i: number): RetryPolicy { ... }
 ```
+
+Added in v0.1.0
 
 # limitRetriesByDelay (function)
 
@@ -155,5 +173,7 @@ retrying and fail.
 **Signature**
 
 ```ts
-export const limitRetriesByDelay = (maxDelay: number, policy: RetryPolicy): RetryPolicy => ...
+export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
 ```
+
+Added in v0.1.0

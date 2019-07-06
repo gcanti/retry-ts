@@ -13,7 +13,7 @@
     "target": "es5",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es2015"]
+    "lib": ["es6"]
   },
   "include": ["./src/**/*"]
 }
