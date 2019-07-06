@@ -21,8 +21,10 @@ Returns updated status.
 **Signature**
 
 ```ts
-export const applyAndDelay = (policy: RetryPolicy, status: RetryStatus): T.Task<RetryStatus> => ...
+export function applyAndDelay(policy: RetryPolicy, status: RetryStatus): T.Task<RetryStatus> { ... }
 ```
+
+Added in v0.1.0
 
 # retrying (function)
 
@@ -33,9 +35,11 @@ signal in their type the outcome has failed. Examples are the
 **Signature**
 
 ```ts
-export const retrying = <A>(
+export function retrying<A>(
   policy: RetryPolicy,
   action: (status: RetryStatus) => T.Task<A>,
   check: (a: A) => boolean
-): T.Task<A> => ...
+): T.Task<A> { ... }
 ```
+
+Added in v0.1.0

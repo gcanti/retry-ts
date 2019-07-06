@@ -1,6 +1,7 @@
 # Changelog
 
 > **Tags:**
+>
 > - [New Feature]
 > - [Bug Fix]
 > - [Breaking Change]
@@ -12,3 +13,12 @@
 **Note**: Gaps between patch versions are faulty/broken releases.
 **Note**: A feature tagged as Experimental is in a high state of flux, you're at risk of it changing without notice.
 
+# 0.1.0
+
+- **Breaking Change**
+  - upgrade to `fp-ts@2.0.0` (@Wenqer)
+  - remove `TaskEither` module (@Wenqer)
+
+# 0.0.1
+
+Initial release
