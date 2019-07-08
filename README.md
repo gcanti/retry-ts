@@ -14,35 +14,38 @@ import { retrying } from 'retry-ts/lib/Task'
 
 const policy = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)))
 
-const err = TE.left('error')
+const fakeAPI = TE.left('API errored out')
 
-const logDelay = (delay: number) => TE.rightIO(log(`retrying in ${delay} milliseconds`))
+const logDelay = (status: RetryStatus) =>
+  TE.rightIO(
+    log(
+      pipe(
+        status.previousDelay,
+        O.map(delay => `retrying in ${delay} milliseconds...`),
+        O.getOrElse(() => 'first attempt...')
+      )
+    )
+  )
 
 const result = retrying(
   policy,
   status =>
     pipe(
-      status.previousDelay,
-      O.fold(
-        () => err,
-        delay =>
-          pipe(
-            logDelay(delay),
-            TE.apSecond(err)
-          )
-      )
+      logDelay(status),
+      TE.apSecond(fakeAPI)
     ),
   E.isLeft
 )
 
 result().then(e => console.log(e))
 /*
-retrying in 200 milliseconds  <= exponentialBackoff
-retrying in 400 milliseconds  <= exponentialBackoff
-retrying in 800 milliseconds  <= exponentialBackoff
-retrying in 1600 milliseconds <= exponentialBackoff
-retrying in 2000 milliseconds <= exponentialBackoff + capDelay
-left("error")                 <= limitRetries
+first attempt...
+retrying in 200 milliseconds...  <= exponentialBackoff
+retrying in 400 milliseconds...  <= exponentialBackoff
+retrying in 800 milliseconds...  <= exponentialBackoff
+retrying in 1600 milliseconds... <= exponentialBackoff
+retrying in 2000 milliseconds... <= exponentialBackoff + capDelay
+left("API errored out")          <= limitRetries
 */
 ```
 
