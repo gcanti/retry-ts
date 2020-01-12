@@ -1,14 +1,5 @@
-/**
- * @since 0.1.0
- */
-import { Monoid, getFunctionMonoid } from 'fp-ts/lib/Monoid'
-import * as O from 'fp-ts/lib/Option'
-import { getJoinSemigroup } from 'fp-ts/lib/Semigroup'
-import { ordNumber } from 'fp-ts/lib/Ord'
-import { pipe } from 'fp-ts/lib/pipeable'
-
-// Adapted from https://github.com/Unisay/purescript-aff-retry
-
+import { Monoid } from 'fp-ts/es6/Monoid'
+import * as O from 'fp-ts/es6/Option'
 /**
  * @since 0.1.0
  */
@@ -20,7 +11,6 @@ export interface RetryStatus {
   /** Latest attempt's delay. Will always be `none` on first run. */
   previousDelay: O.Option<number>
 }
-
 /**
  * A `RetryPolicy` is a function that takes an `RetryStatus` and
  * possibly returns a delay in milliseconds. Iteration numbers start
@@ -32,7 +22,6 @@ export interface RetryStatus {
 export interface RetryPolicy {
   (status: RetryStatus): O.Option<number>
 }
-
 /**
  * 'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
  * The semantics of this combination are as follows:
@@ -54,22 +43,13 @@ export interface RetryPolicy {
  *
  * @since 0.1.0
  */
-export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
-  O.getApplyMonoid({
-    ...getJoinSemigroup(ordNumber),
-    empty: 0
-  })
-)<RetryStatus>()
-
+export declare const monoidRetryPolicy: Monoid<RetryPolicy>
 /**
  * Retry immediately, but only up to `i` times.
  *
  * @since 0.1.0
  */
-export function limitRetries(i: number): RetryPolicy {
-  return status => (status.iterNumber >= i ? O.none : O.some(0))
-}
-
+export declare function limitRetries(i: number): RetryPolicy
 /**
  * Add an upperbound to a policy such that once the given time-delay
  * amount *per try* has been reached or exceeded, the policy will stop
@@ -77,24 +57,13 @@ export function limitRetries(i: number): RetryPolicy {
  *
  * @since 0.1.0
  */
-export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy {
-  return status =>
-    pipe(
-      status,
-      policy,
-      O.filter(delay => delay < maxDelay)
-    )
-}
-
+export declare function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy
 /**
  * Constant delay with unlimited retries
  *
  * @since 0.1.0
  */
-export function constantDelay(delay: number): RetryPolicy {
-  return () => O.some(delay)
-}
-
+export declare function constantDelay(delay: number): RetryPolicy
 /**
  * Set a time-upperbound for any delays that may be directed by the
  * given policy. This function does not terminate the retrying. The policy
@@ -105,47 +74,24 @@ export function constantDelay(delay: number): RetryPolicy {
  *
  * @since 0.1.0
  */
-export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy {
-  return status =>
-    pipe(
-      status,
-      policy,
-      O.map(delay => Math.min(maxDelay, delay))
-    )
-}
-
+export declare function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy
 /**
  * Grow delay exponentially each iteration.
  * Each delay will increase by a factor of two.
  *
  * @since 0.1.0
  */
-export function exponentialBackoff(delay: number): RetryPolicy {
-  return status => O.some(delay * Math.pow(2, status.iterNumber))
-}
-
+export declare function exponentialBackoff(delay: number): RetryPolicy
 /**
  * Initial, default retry status. Exported mostly to allow user code
  * to test their handlers and retry policies.
  *
  * @since 0.1.0
  */
-export const defaultRetryStatus: RetryStatus = {
-  iterNumber: 0,
-  cumulativeDelay: 0,
-  previousDelay: O.none
-}
-
+export declare const defaultRetryStatus: RetryStatus
 /**
  * Apply policy on status to see what the decision would be.
  *
  * @since 0.1.0
  */
-export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus {
-  const previousDelay = policy(status)
-  return {
-    iterNumber: status.iterNumber + 1,
-    cumulativeDelay: status.cumulativeDelay + O.getOrElse(() => 0)(previousDelay),
-    previousDelay
-  }
-}
+export declare function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus
