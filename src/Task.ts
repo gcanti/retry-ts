@@ -1,3 +1,6 @@
+/**
+ * @since 0.1.0
+ */
 import * as T from 'fp-ts/lib/Task'
 import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -13,7 +16,10 @@ export function applyAndDelay(policy: RetryPolicy, status: RetryStatus): T.Task<
   const newStatus = applyPolicy(policy, status)
   return pipe(
     newStatus.previousDelay,
-    O.fold(() => T.task.of(newStatus), millis => T.delay(millis)(T.task.of(newStatus)))
+    O.fold(
+      () => T.task.of(newStatus),
+      millis => T.delay(millis)(T.task.of(newStatus))
+    )
   )
 }
 
@@ -40,7 +46,10 @@ export function retrying<A>(
             T.chain(status =>
               pipe(
                 status.previousDelay,
-                O.fold(() => T.task.of(a), () => go(status))
+                O.fold(
+                  () => T.task.of(a),
+                  () => go(status)
+                )
               )
             )
           )
