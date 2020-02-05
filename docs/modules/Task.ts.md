@@ -12,12 +12,12 @@ Added in v0.1.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [applyAndDelay (function)](#applyanddelay-function)
-- [retrying (function)](#retrying-function)
+- [applyAndDelay](#applyanddelay)
+- [retrying](#retrying)
 
 ---
 
-# applyAndDelay (function)
+# applyAndDelay
 
 Apply policy and delay by its amount if it results in a retry.
 Returns updated status.
@@ -30,7 +30,7 @@ export function applyAndDelay(policy: RetryPolicy, status: RetryStatus): T.Task<
 
 Added in v0.1.0
 
-# retrying (function)
+# retrying
 
 Retry combinator for actions that don't raise exceptions, but
 signal in their type the outcome has failed. Examples are the

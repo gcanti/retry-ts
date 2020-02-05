@@ -1,6 +1,6 @@
 {
   "name": "retry-ts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Retry combinators for monadic actions that may fail",
   "files": [
     "lib",
@@ -40,7 +40,7 @@
     "@types/jest": "^22.2.2",
     "@types/node": "8.0.19",
     "cross-env": "^5.1.4",
-    "docs-ts": "^0.3.0",
+    "docs-ts": "^0.3.4",
     "fp-ts": "^2.0.0",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^24.8.0",

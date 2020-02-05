@@ -14,14 +14,14 @@ Added in v0.1.0
 
 - [RetryPolicy (interface)](#retrypolicy-interface)
 - [RetryStatus (interface)](#retrystatus-interface)
-- [defaultRetryStatus (constant)](#defaultretrystatus-constant)
-- [monoidRetryPolicy (constant)](#monoidretrypolicy-constant)
-- [applyPolicy (function)](#applypolicy-function)
-- [capDelay (function)](#capdelay-function)
-- [constantDelay (function)](#constantdelay-function)
-- [exponentialBackoff (function)](#exponentialbackoff-function)
-- [limitRetries (function)](#limitretries-function)
-- [limitRetriesByDelay (function)](#limitretriesbydelay-function)
+- [applyPolicy](#applypolicy)
+- [capDelay](#capdelay)
+- [constantDelay](#constantdelay)
+- [defaultRetryStatus](#defaultretrystatus)
+- [exponentialBackoff](#exponentialbackoff)
+- [limitRetries](#limitretries)
+- [limitRetriesByDelay](#limitretriesbydelay)
+- [monoidRetryPolicy](#monoidretrypolicy)
 
 ---
 
@@ -59,7 +59,47 @@ export interface RetryStatus {
 
 Added in v0.1.0
 
-# defaultRetryStatus (constant)
+# applyPolicy
+
+Apply policy on status to see what the decision would be.
+
+**Signature**
+
+```ts
+export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus { ... }
+```
+
+Added in v0.1.0
+
+# capDelay
+
+Set a time-upperbound for any delays that may be directed by the
+given policy. This function does not terminate the retrying. The policy
+capDelay(maxDelay, exponentialBackoff(n))`will never stop retrying. It will reach a state where it retries forever with a delay of`maxDelay`
+between each one. To get termination you need to use one of the
+'limitRetries' function variants.
+
+**Signature**
+
+```ts
+export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
+```
+
+Added in v0.1.0
+
+# constantDelay
+
+Constant delay with unlimited retries
+
+**Signature**
+
+```ts
+export function constantDelay(delay: number): RetryPolicy { ... }
+```
+
+Added in v0.1.0
+
+# defaultRetryStatus
 
 Initial, default retry status. Exported mostly to allow user code
 to test their handlers and retry policies.
@@ -72,7 +112,46 @@ export const defaultRetryStatus: RetryStatus = ...
 
 Added in v0.1.0
 
-# monoidRetryPolicy (constant)
+# exponentialBackoff
+
+Grow delay exponentially each iteration.
+Each delay will increase by a factor of two.
+
+**Signature**
+
+```ts
+export function exponentialBackoff(delay: number): RetryPolicy { ... }
+```
+
+Added in v0.1.0
+
+# limitRetries
+
+Retry immediately, but only up to `i` times.
+
+**Signature**
+
+```ts
+export function limitRetries(i: number): RetryPolicy { ... }
+```
+
+Added in v0.1.0
+
+# limitRetriesByDelay
+
+Add an upperbound to a policy such that once the given time-delay
+amount _per try_ has been reached or exceeded, the policy will stop
+retrying and fail.
+
+**Signature**
+
+```ts
+export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
+```
+
+Added in v0.1.0
+
+# monoidRetryPolicy
 
 'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
 The semantics of this combination are as follows:
@@ -99,85 +178,6 @@ import { monoidRetryPolicy, exponentialBackoff, limitRetries } from 'retry-ts'
 // One can easily define an exponential backoff policy with a limited
 // number of retries:
 export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
-```
-
-Added in v0.1.0
-
-# applyPolicy (function)
-
-Apply policy on status to see what the decision would be.
-
-**Signature**
-
-```ts
-export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus { ... }
-```
-
-Added in v0.1.0
-
-# capDelay (function)
-
-Set a time-upperbound for any delays that may be directed by the
-given policy. This function does not terminate the retrying. The policy
-capDelay(maxDelay, exponentialBackoff(n))`will never stop retrying. It will reach a state where it retries forever with a delay of`maxDelay`
-between each one. To get termination you need to use one of the
-'limitRetries' function variants.
-
-**Signature**
-
-```ts
-export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
-```
-
-Added in v0.1.0
-
-# constantDelay (function)
-
-Constant delay with unlimited retries
-
-**Signature**
-
-```ts
-export function constantDelay(delay: number): RetryPolicy { ... }
-```
-
-Added in v0.1.0
-
-# exponentialBackoff (function)
-
-Grow delay exponentially each iteration.
-Each delay will increase by a factor of two.
-
-**Signature**
-
-```ts
-export function exponentialBackoff(delay: number): RetryPolicy { ... }
-```
-
-Added in v0.1.0
-
-# limitRetries (function)
-
-Retry immediately, but only up to `i` times.
-
-**Signature**
-
-```ts
-export function limitRetries(i: number): RetryPolicy { ... }
-```
-
-Added in v0.1.0
-
-# limitRetriesByDelay (function)
-
-Add an upperbound to a policy such that once the given time-delay
-amount _per try_ has been reached or exceeded, the policy will stop
-retrying and fail.
-
-**Signature**
-
-```ts
-export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
 ```
 
 Added in v0.1.0
