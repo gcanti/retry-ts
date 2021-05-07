@@ -1,6 +1,6 @@
 {
   "name": "retry-ts",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Retry combinators for monadic actions that may fail",
   "main": "lib/index.js",
   "module": "es6/index.js",
