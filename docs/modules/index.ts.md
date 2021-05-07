@@ -4,7 +4,7 @@ nav_order: 1
 parent: Modules
 ---
 
-# index overview
+## index overview
 
 Added in v0.1.0
 
@@ -12,20 +12,23 @@ Added in v0.1.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [RetryPolicy (interface)](#retrypolicy-interface)
-- [RetryStatus (interface)](#retrystatus-interface)
-- [applyPolicy](#applypolicy)
-- [capDelay](#capdelay)
-- [constantDelay](#constantdelay)
-- [defaultRetryStatus](#defaultretrystatus)
-- [exponentialBackoff](#exponentialbackoff)
-- [limitRetries](#limitretries)
-- [limitRetriesByDelay](#limitretriesbydelay)
-- [monoidRetryPolicy](#monoidretrypolicy)
+- [utils](#utils)
+  - [RetryPolicy (interface)](#retrypolicy-interface)
+  - [RetryStatus (interface)](#retrystatus-interface)
+  - [applyPolicy](#applypolicy)
+  - [capDelay](#capdelay)
+  - [constantDelay](#constantdelay)
+  - [defaultRetryStatus](#defaultretrystatus)
+  - [exponentialBackoff](#exponentialbackoff)
+  - [limitRetries](#limitretries)
+  - [limitRetriesByDelay](#limitretriesbydelay)
+  - [monoidRetryPolicy](#monoidretrypolicy)
 
 ---
 
-# RetryPolicy (interface)
+# utils
+
+## RetryPolicy (interface)
 
 A `RetryPolicy` is a function that takes an `RetryStatus` and
 possibly returns a delay in milliseconds. Iteration numbers start
@@ -42,7 +45,7 @@ export interface RetryPolicy {
 
 Added in v0.1.0
 
-# RetryStatus (interface)
+## RetryStatus (interface)
 
 **Signature**
 
@@ -59,19 +62,19 @@ export interface RetryStatus {
 
 Added in v0.1.0
 
-# applyPolicy
+## applyPolicy
 
 Apply policy on status to see what the decision would be.
 
 **Signature**
 
 ```ts
-export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus { ... }
+export declare function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStatus
 ```
 
 Added in v0.1.0
 
-# capDelay
+## capDelay
 
 Set a time-upperbound for any delays that may be directed by the
 given policy. This function does not terminate the retrying. The policy
@@ -82,24 +85,24 @@ between each one. To get termination you need to use one of the
 **Signature**
 
 ```ts
-export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
+export declare function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy
 ```
 
 Added in v0.1.0
 
-# constantDelay
+## constantDelay
 
 Constant delay with unlimited retries
 
 **Signature**
 
 ```ts
-export function constantDelay(delay: number): RetryPolicy { ... }
+export declare function constantDelay(delay: number): RetryPolicy
 ```
 
 Added in v0.1.0
 
-# defaultRetryStatus
+## defaultRetryStatus
 
 Initial, default retry status. Exported mostly to allow user code
 to test their handlers and retry policies.
@@ -107,12 +110,12 @@ to test their handlers and retry policies.
 **Signature**
 
 ```ts
-export const defaultRetryStatus: RetryStatus = ...
+export declare const defaultRetryStatus: RetryStatus
 ```
 
 Added in v0.1.0
 
-# exponentialBackoff
+## exponentialBackoff
 
 Grow delay exponentially each iteration.
 Each delay will increase by a factor of two.
@@ -120,24 +123,24 @@ Each delay will increase by a factor of two.
 **Signature**
 
 ```ts
-export function exponentialBackoff(delay: number): RetryPolicy { ... }
+export declare function exponentialBackoff(delay: number): RetryPolicy
 ```
 
 Added in v0.1.0
 
-# limitRetries
+## limitRetries
 
 Retry immediately, but only up to `i` times.
 
 **Signature**
 
 ```ts
-export function limitRetries(i: number): RetryPolicy { ... }
+export declare function limitRetries(i: number): RetryPolicy
 ```
 
 Added in v0.1.0
 
-# limitRetriesByDelay
+## limitRetriesByDelay
 
 Add an upperbound to a policy such that once the given time-delay
 amount _per try_ has been reached or exceeded, the policy will stop
@@ -146,12 +149,12 @@ retrying and fail.
 **Signature**
 
 ```ts
-export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy { ... }
+export declare function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy
 ```
 
 Added in v0.1.0
 
-# monoidRetryPolicy
+## monoidRetryPolicy
 
 'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
 The semantics of this combination are as follows:
@@ -167,7 +170,7 @@ The semantics of this combination are as follows:
 **Signature**
 
 ```ts
-export const monoidRetryPolicy: Monoid<RetryPolicy> = ...
+export declare const monoidRetryPolicy: Monoid<RetryPolicy>
 ```
 
 **Example**

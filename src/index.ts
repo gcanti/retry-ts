@@ -67,7 +67,7 @@ export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
  * @since 0.1.0
  */
 export function limitRetries(i: number): RetryPolicy {
-  return status => (status.iterNumber >= i ? O.none : O.some(0))
+  return (status) => (status.iterNumber >= i ? O.none : O.some(0))
 }
 
 /**
@@ -78,11 +78,11 @@ export function limitRetries(i: number): RetryPolicy {
  * @since 0.1.0
  */
 export function limitRetriesByDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy {
-  return status =>
+  return (status) =>
     pipe(
       status,
       policy,
-      O.filter(delay => delay < maxDelay)
+      O.filter((delay) => delay < maxDelay)
     )
 }
 
@@ -106,11 +106,11 @@ export function constantDelay(delay: number): RetryPolicy {
  * @since 0.1.0
  */
 export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy {
-  return status =>
+  return (status) =>
     pipe(
       status,
       policy,
-      O.map(delay => Math.min(maxDelay, delay))
+      O.map((delay) => Math.min(maxDelay, delay))
     )
 }
 
@@ -121,7 +121,7 @@ export function capDelay(maxDelay: number, policy: RetryPolicy): RetryPolicy {
  * @since 0.1.0
  */
 export function exponentialBackoff(delay: number): RetryPolicy {
-  return status => O.some(delay * Math.pow(2, status.iterNumber))
+  return (status) => O.some(delay * Math.pow(2, status.iterNumber))
 }
 
 /**
