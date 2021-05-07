@@ -54,12 +54,18 @@ export interface RetryPolicy {
  *
  * @since 0.1.3
  */
-export const Monoid: M.Monoid<RetryPolicy> = M.getFunctionMonoid(
-  O.getApplyMonoid({
-    ...getJoinSemigroup(ordNumber),
-    empty: 0
-  })
-)<RetryStatus>()
+export const Monoid: M.Monoid<RetryPolicy> =
+  /*#__PURE__*/
+  M.getFunctionMonoid(
+    /*#__PURE__*/
+    O.getApplyMonoid({
+      concat:
+        /*#__PURE__*/
+        getJoinSemigroup(ordNumber).concat,
+      empty: 0
+    })
+    /*#__PURE__*/
+  )<RetryStatus>()
 
 /**
  * Retry immediately, but only up to `i` times.
