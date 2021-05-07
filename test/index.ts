@@ -53,7 +53,7 @@ describe('retry policy', () => {
   })
 
   it('limitRetriesByDelay', () => {
-    const incrementPolicy: RetryPolicy = status => some(status.iterNumber + 1)
+    const incrementPolicy: RetryPolicy = (status) => some(status.iterNumber + 1)
     const p = limitRetriesByDelay(3, incrementPolicy)
     assert.deepEqual(applyPolicyN(2, p), {
       iterNumber: 2,
@@ -77,7 +77,7 @@ describe('retry policy', () => {
   })
 
   it('capDelay', () => {
-    const incrementPolicy: RetryPolicy = status => some(status.iterNumber + 1)
+    const incrementPolicy: RetryPolicy = (status) => some(status.iterNumber + 1)
     const p = capDelay(3, incrementPolicy)
     assert.deepEqual(applyPolicyN(4, p), {
       iterNumber: 4,

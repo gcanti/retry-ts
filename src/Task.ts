@@ -18,7 +18,7 @@ export function applyAndDelay(policy: RetryPolicy, status: RetryStatus): T.Task<
     newStatus.previousDelay,
     O.fold(
       () => T.task.of(newStatus),
-      millis => T.delay(millis)(T.task.of(newStatus))
+      (millis) => T.delay(millis)(T.task.of(newStatus))
     )
   )
 }
@@ -39,11 +39,11 @@ export function retrying<A>(
     pipe(
       status,
       action,
-      T.chain(a => {
+      T.chain((a) => {
         if (check(a)) {
           return pipe(
             applyAndDelay(policy, status),
-            T.chain(status =>
+            T.chain((status) =>
               pipe(
                 status.previousDelay,
                 O.fold(

@@ -20,7 +20,7 @@ describe('Task', () => {
         status.previousDelay,
         O.fold(
           () => err,
-          delay => pipe(logDelay(delay), TE.apSecond(err))
+          (delay) => pipe(logDelay(delay), TE.apSecond(err))
         )
       )
     const result1 = retrying(policy, action, E.isLeft)
