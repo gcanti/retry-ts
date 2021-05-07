@@ -9,7 +9,7 @@ import {
   exponentialBackoff,
   limitRetries,
   limitRetriesByDelay,
-  monoidRetryPolicy,
+  Monoid,
   RetryPolicy,
   RetryStatus
 } from '../src'
@@ -25,13 +25,13 @@ describe('retry policy', () => {
   it('if either policy returns None then composition also returns None', () => {
     const p1: RetryPolicy = () => some(0)
     const p2: RetryPolicy = () => none
-    assert.deepEqual(applyPolicy(monoidRetryPolicy.concat(p1, p2), defaultRetryStatus).previousDelay, none)
+    assert.deepEqual(applyPolicy(Monoid.concat(p1, p2), defaultRetryStatus).previousDelay, none)
   })
 
   it('if both policies return a delay, larger delay is used', () => {
-    const p1: RetryPolicy = monoidRetryPolicy.empty
+    const p1: RetryPolicy = Monoid.empty
     const p2: RetryPolicy = () => some(1)
-    assert.deepEqual(applyPolicy(monoidRetryPolicy.concat(p1, p2), defaultRetryStatus), {
+    assert.deepEqual(applyPolicy(Monoid.concat(p1, p2), defaultRetryStatus), {
       iterNumber: 1,
       cumulativeDelay: 1,
       previousDelay: some(1)

@@ -15,6 +15,8 @@
 
 # 0.1.3
 
+- **Deprecation**
+  - deprecate `monoidRetryPolicy` in favour of `Monoid` (@gcanti)
 - **Polish**
   - allow import without es6 or lib directory #8 (@mlegenhausen)
 

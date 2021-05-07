@@ -1,7 +1,7 @@
 /**
  * @since 0.1.0
  */
-import { Monoid, getFunctionMonoid } from 'fp-ts/lib/Monoid'
+import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import { getJoinSemigroup } from 'fp-ts/lib/Semigroup'
 import { ordNumber } from 'fp-ts/lib/Ord'
@@ -52,9 +52,9 @@ export interface RetryPolicy {
  * // number of retries:
  * export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
  *
- * @since 0.1.0
+ * @since 0.1.3
  */
-export const monoidRetryPolicy: Monoid<RetryPolicy> = getFunctionMonoid(
+export const Monoid: M.Monoid<RetryPolicy> = M.getFunctionMonoid(
   O.getApplyMonoid({
     ...getJoinSemigroup(ordNumber),
     empty: 0
@@ -149,3 +149,14 @@ export function applyPolicy(policy: RetryPolicy, status: RetryStatus): RetryStat
     previousDelay
   }
 }
+
+// -------------------------------------------------------------------------------------
+// deprecated
+// -------------------------------------------------------------------------------------
+
+/**
+ * Use [`Monoid`](#monoid) instead.
+ * @since 0.1.0
+ * @deprecated
+ */
+export const monoidRetryPolicy: M.Monoid<RetryPolicy> = Monoid

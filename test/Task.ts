@@ -3,13 +3,13 @@ import * as E from 'fp-ts/lib/Either'
 import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as TE from 'fp-ts/lib/TaskEither'
-import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy, RetryStatus } from '../src'
+import { capDelay, exponentialBackoff, limitRetries, Monoid, RetryStatus } from '../src'
 import { retrying } from '../src/Task'
 
 describe('Task', () => {
   it('retrying', async () => {
     const log: Array<string> = []
-    const policy = capDelay(1000, monoidRetryPolicy.concat(exponentialBackoff(100), limitRetries(5)))
+    const policy = capDelay(1000, Monoid.concat(exponentialBackoff(100), limitRetries(5)))
     const err = TE.left('error')
     const logDelay = (delay: number) =>
       TE.rightIO(() => {

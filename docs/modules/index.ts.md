@@ -13,6 +13,7 @@ Added in v0.1.0
 <h2 class="text-delta">Table of contents</h2>
 
 - [utils](#utils)
+  - [Monoid](#monoid)
   - [RetryPolicy (interface)](#retrypolicy-interface)
   - [RetryStatus (interface)](#retrystatus-interface)
   - [applyPolicy](#applypolicy)
@@ -22,11 +23,42 @@ Added in v0.1.0
   - [exponentialBackoff](#exponentialbackoff)
   - [limitRetries](#limitretries)
   - [limitRetriesByDelay](#limitretriesbydelay)
-  - [monoidRetryPolicy](#monoidretrypolicy)
+  - [~~monoidRetryPolicy~~](#monoidretrypolicy)
 
 ---
 
 # utils
+
+## Monoid
+
+'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
+The semantics of this combination are as follows:
+
+1. If either policy returns 'None', the combined policy returns
+   'None'. This can be used to inhibit after a number of retries,
+   for example.
+
+2. If both policies return a delay, the larger delay will be used.
+   This is quite natural when combining multiple policies to achieve a
+   certain effect.
+
+**Signature**
+
+```ts
+export declare const Monoid: M.Monoid<RetryPolicy>
+```
+
+**Example**
+
+```ts
+import { monoidRetryPolicy, exponentialBackoff, limitRetries } from 'retry-ts'
+
+// One can easily define an exponential backoff policy with a limited
+// number of retries:
+export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
+```
+
+Added in v0.1.3
 
 ## RetryPolicy (interface)
 
@@ -154,33 +186,14 @@ export declare function limitRetriesByDelay(maxDelay: number, policy: RetryPolic
 
 Added in v0.1.0
 
-## monoidRetryPolicy
+## ~~monoidRetryPolicy~~
 
-'RetryPolicy' is a 'Monoid'. You can collapse multiple strategies into one using 'concat'.
-The semantics of this combination are as follows:
-
-1. If either policy returns 'None', the combined policy returns
-   'None'. This can be used to inhibit after a number of retries,
-   for example.
-
-2. If both policies return a delay, the larger delay will be used.
-   This is quite natural when combining multiple policies to achieve a
-   certain effect.
+Use [`Monoid`](#monoid) instead.
 
 **Signature**
 
 ```ts
-export declare const monoidRetryPolicy: Monoid<RetryPolicy>
-```
-
-**Example**
-
-```ts
-import { monoidRetryPolicy, exponentialBackoff, limitRetries } from 'retry-ts'
-
-// One can easily define an exponential backoff policy with a limited
-// number of retries:
-export const limitedBackoff = monoidRetryPolicy.concat(exponentialBackoff(50), limitRetries(5))
+export declare const monoidRetryPolicy: M.Monoid<RetryPolicy>
 ```
 
 Added in v0.1.0
