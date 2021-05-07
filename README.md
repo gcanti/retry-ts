@@ -4,13 +4,13 @@ which in turn is a porting of Haskell's [retry](https://github.com/Soostone/retr
 # Example
 
 ```ts
-import { log } from 'fp-ts/lib/Console'
-import * as E from 'fp-ts/lib/Either'
-import * as O from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
-import * as TE from 'fp-ts/lib/TaskEither'
+import { log } from 'fp-ts/Console'
+import * as E from 'fp-ts/Either'
+import * as O from 'fp-ts/Option'
+import { pipe } from 'fp-ts/function'
+import * as TE from 'fp-ts/TaskEither'
 import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy } from 'retry-ts'
-import { retrying } from 'retry-ts/lib/Task'
+import { retrying } from 'retry-ts/Task'
 
 const policy = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)))
 
@@ -21,23 +21,15 @@ const logDelay = (status: RetryStatus) =>
     log(
       pipe(
         status.previousDelay,
-        O.map(delay => `retrying in ${delay} milliseconds...`),
+        O.map((delay) => `retrying in ${delay} milliseconds...`),
         O.getOrElse(() => 'first attempt...')
       )
     )
   )
 
-const result = retrying(
-  policy,
-  status =>
-    pipe(
-      logDelay(status),
-      TE.apSecond(fakeAPI)
-    ),
-  E.isLeft
-)
+const result = retrying(policy, (status) => pipe(logDelay(status), TE.apSecond(fakeAPI)), E.isLeft)
 
-result().then(e => console.log(e))
+result().then((e) => console.log(e))
 /*
 first attempt...
 retrying in 200 milliseconds...  <= exponentialBackoff
