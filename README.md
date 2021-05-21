@@ -6,13 +6,13 @@ which in turn is a porting of Haskell's [retry](https://github.com/Soostone/retr
 ```ts
 import { log } from 'fp-ts/Console'
 import * as E from 'fp-ts/Either'
-import * as O from 'fp-ts/Option'
 import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
-import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy } from 'retry-ts'
+import { capDelay, exponentialBackoff, limitRetries, Monoid, RetryStatus } from 'retry-ts'
 import { retrying } from 'retry-ts/Task'
 
-const policy = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)))
+const policy = capDelay(2000, Monoid.concat(exponentialBackoff(200), limitRetries(5)))
 
 const fakeAPI = TE.left('API errored out')
 
