@@ -9,31 +9,39 @@ which in turn is a porting of Haskell's [retry](https://github.com/Soostone/retr
 # Example
 
 ```ts
-import { log } from 'fp-ts/lib/Console'
-import { isLeft } from 'fp-ts/lib/Either'
-import { fromIO, fromLeft } from 'fp-ts/lib/TaskEither'
-import { capDelay, exponentialBackoff, limitRetries, monoidRetryPolicy } from 'retry-ts'
-import { retrying } from 'retry-ts/lib/TaskEither'
+import { log } from 'fp-ts/Console'
+import * as E from 'fp-ts/Either'
+import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
+import * as TE from 'fp-ts/TaskEither'
+import { capDelay, exponentialBackoff, limitRetries, Monoid, RetryStatus } from 'retry-ts'
+import { retrying } from 'retry-ts/Task'
 
-const policy = capDelay(2000, monoidRetryPolicy.concat(exponentialBackoff(200), limitRetries(5)))
+const policy = capDelay(2000, Monoid.concat(exponentialBackoff(200), limitRetries(5)))
 
-const fa = fromLeft<string, number>('error')
+const fakeAPI = TE.left('API errored out')
 
-const logDelay = (delay: number) => fromIO(log(`retrying in ${delay} milliseconds`))
+const logDelay = (status: RetryStatus) =>
+  TE.rightIO(
+    log(
+      pipe(
+        status.previousDelay,
+        O.map((delay) => `retrying in ${delay} milliseconds...`),
+        O.getOrElse(() => 'first attempt...')
+      )
+    )
+  )
 
-const result = retrying(
-  policy,
-  status => status.previousDelay.fold(fa, delay => logDelay(delay).applySecond(fa)),
-  isLeft
-)
+const result = retrying(policy, (status) => pipe(logDelay(status), TE.apSecond(fakeAPI)), E.isLeft)
 
-result.run().then(e => console.log(e))
+result().then((e) => console.log(e))
 /*
-retrying in 200 milliseconds  <= exponentialBackoff
-retrying in 400 milliseconds  <= exponentialBackoff
-retrying in 800 milliseconds  <= exponentialBackoff
-retrying in 1600 milliseconds <= exponentialBackoff
-retrying in 2000 milliseconds <= exponentialBackoff + capDelay
-left("error")                 <= limitRetries
+first attempt...
+retrying in 200 milliseconds...  <= exponentialBackoff
+retrying in 400 milliseconds...  <= exponentialBackoff
+retrying in 800 milliseconds...  <= exponentialBackoff
+retrying in 1600 milliseconds... <= exponentialBackoff
+retrying in 2000 milliseconds... <= exponentialBackoff + capDelay
+left("API errored out")          <= limitRetries
 */
 ```
