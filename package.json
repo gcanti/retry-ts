@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/gcanti/retry-ts",
   "peerDependencies": {
-    "fp-ts": "^2.0.0"
+    "fp-ts": "^2.4.0"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",

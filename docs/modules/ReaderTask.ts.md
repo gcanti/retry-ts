@@ -1,12 +1,12 @@
 ---
-title: Task.ts
-nav_order: 3
+title: ReaderTask.ts
+nav_order: 2
 parent: Modules
 ---
 
-## Task overview
+## ReaderTask overview
 
-Added in v0.1.0
+Added in v0.1.4
 
 ---
 
@@ -28,10 +28,10 @@ Returns updated status.
 **Signature**
 
 ```ts
-export declare function applyAndDelay(policy: RetryPolicy, status: RetryStatus): T.Task<RetryStatus>
+export declare const applyAndDelay: <R>(policy: RetryPolicy, status: RetryStatus) => ReaderTask<R, RetryStatus>
 ```
 
-Added in v0.1.0
+Added in v0.1.4
 
 ## retrying
 
@@ -42,11 +42,11 @@ signal in their type the outcome has failed. Examples are the
 **Signature**
 
 ```ts
-export declare function retrying<A>(
+export declare function retrying<R, A>(
   policy: RetryPolicy,
-  action: (status: RetryStatus) => T.Task<A>,
+  action: (status: RetryStatus) => ReaderTask<R, A>,
   check: (a: A) => boolean
-): T.Task<A>
+): ReaderTask<R, A>
 ```
 
-Added in v0.1.0
+Added in v0.1.4
