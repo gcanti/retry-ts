@@ -6,7 +6,7 @@ import * as TE from 'fp-ts/lib/TaskEither'
 import { capDelay, exponentialBackoff, limitRetries, Monoid, RetryStatus } from '../src'
 import { retrying } from '../src/ReaderTask'
 
-describe('Task', () => {
+describe('ReaderTask', () => {
   it('retrying', async () => {
     const log: Array<string> = []
     const policy = capDelay(1000, Monoid.concat(exponentialBackoff(100), limitRetries(5)))
