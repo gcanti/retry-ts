@@ -13,6 +13,11 @@
 **Note**: Gaps between patch versions are faulty/broken releases.
 **Note**: A feature tagged as Experimental is in a high state of flux, you're at risk of it changing without notice.
 
+# 0.1.4
+
+- **New Feature**
+  - add `ReaderTask` support, #11 (@mlegenhausen)
+
 # 0.1.3
 
 - **Deprecation**
